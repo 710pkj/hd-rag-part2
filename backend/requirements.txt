@@ -1,0 +1,17 @@
+torch
+transformers
+huggingface_hub
+faiss-cpu
+scipy
+numpy
+pandas
+langgraph
+langchain-core
+langchain-groq
+tavily-python
+fastapi
+uvicorn[standard]
+python-dotenv
+requests
+psycopg[binary]
+pgvector

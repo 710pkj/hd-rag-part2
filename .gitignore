@@ -1,0 +1,23 @@
+# 설치 결과
+node_modules/
+.next/
+backend/.venv/
+.venv*/
+__pycache__/
+*.pyc
+*.tsbuildinfo
+next-env.d.ts
+
+# 비밀 값 (.env.example만 올림)
+.env
+.env.*
+!.env.example
+
+# 실행 캐시 · 데이터 · 과제 원본 PDF (각자 둠, README 준비물 참고)
+/backend/cache_runtime/
+/data/
+/web/public/docs/
+/web/public/pdfjs/
+
+# 공유용 압축 결과물 (tools/make_zip.py)
+/dist/
