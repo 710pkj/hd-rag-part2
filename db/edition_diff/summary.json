@@ -1,0 +1,300 @@
+{
+ "python_main_s": 0.17,
+ "ref_rows": 93,
+ "python_same_bytes": true,
+ "server": "PostgreSQL 16.15",
+ "load_s": 0.022,
+ "refresh_s": 0.14,
+ "db_rows": {
+  "documents": 2,
+  "pages": 495,
+  "notations": 1152,
+  "section_texts": 92
+ },
+ "norm_mismatch": {
+  "pages": 0,
+  "names": 0,
+  "reqs": 0,
+  "section_texts": 0
+ },
+ "longest_added_name_key": 80,
+ "sql": {
+  "lev": {
+   "rows": 94,
+   "same_bytes": false,
+   "same_order": false,
+   "only_sql": [
+    [
+     "Chemical Tanker",
+     "삭제",
+     "Apparent Specific Gravity(SG) or",
+     "32",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Chemical Tanker",
+     "신설",
+     "Apparent Specific Gravity (SG) and/or Name of Chemical primarily carried",
+     "",
+     "32",
+     "",
+     ""
+    ]
+   ],
+   "only_python": [
+    [
+     "Chemical Tanker",
+     "명칭 변경",
+     "Apparent Specific Gravity(SG) or → Apparent Specific Gravity (SG) and/or Name of Chemical primarily carried",
+     "32",
+     "32",
+     "",
+     ""
+    ]
+   ],
+   "seconds": 0.058,
+   "kinds": {
+    "신설": 56,
+    "요건 변경": 19,
+    "명칭 변경": 9,
+    "삭제": 10
+   }
+  },
+  "trgm": {
+   "rows": 100,
+   "same_bytes": false,
+   "same_order": false,
+   "only_sql": [
+    [
+     "Ch 3",
+     "삭제",
+     "LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",
+     "224",
+     "",
+     "to ships comply with the requirements of the Rules and Guidance for the Classification of Ships Using Low-flashpoint Fuels in which engines using low-flashpoint fuel are installed, other than ships carrying gas in bulk. (Low-Flashpoint Fuel Ship) | DF-LNG | Dual fuel engines using LNG as fuel are installed | SF-LNG | Single fuel engines using LNG as fuel are installed | DF-Methanol | Dual fuel engines using methyl alcohol as fuel are installed | SF-Methanol | Single fuel engines using methyl alcohol as fuel are installed | DF-Ethanol | Dual fuel engines using ethyl alcohol as fuel are installed | SF-Ethanol | Single fuel engines using ethyl alcohol as fuel are installed",
+     ""
+    ],
+    [
+     "Ch 3",
+     "신설",
+     "LFFS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) (DF-LPG, SF-LPG) (DF-Ammonia, SF-Ammonia)",
+     "",
+     "228",
+     "",
+     "to ships comply with the requirements of the Rules and Guidance for the Classification of Ships Using Low-flashpoint Fuels in which engines using low-flashpoint fuel are installed, other than ships carrying gas in bulk. (Low-Flashpoint Fuel Ship) <table><tr><td>DF-LNG</td><td>Dual fuel engines using LNG as fuel are installed</td></tr><tr><td>SF-LNG</td><td>Single fuel engines using LNG as fuel are installed</td></tr><tr><td>DF-Methanol</td><td>Dual fuel engines using methyl alcohol as fuel are installed</td></tr><tr><td>SF-Methanol</td><td>Single fuel engines using methyl alcohol as fuel are installed</td></tr><tr><td>DF-Ethanol</td><td>Dual fuel engines using ethyl alcohol as fuel are installed</td></tr><tr><td>SF-Ethanol</td><td>Single fuel engines using ethyl alcohol as fuel are installed</td></tr><tr><td>DF-LPG</td><td>Dual fuel engines using LPG as fuel are installed</td></tr><tr><td>SF-LPG</td><td>Single fuel engines using LPG as fuel are installed</td></tr><tr><td>DF-Ammonia</td><td>Dual fuel engines using Ammonia as fuel are installed</td></tr><tr><td>SF-Ammonia</td><td>Single fuel engines using Ammonia as fuel are installed</td></tr></table>"
+    ],
+    [
+     "Chemical Tanker",
+     "삭제",
+     "Apparent Specific Gravity(SG) or",
+     "32",
+     "",
+     "",
+     ""
+    ],
+    [
+     "Chemical Tanker",
+     "삭제",
+     "Name of Chemical when exclusively carried",
+     "32",
+     "",
+     "Pt 7 Ch 6 | -",
+     ""
+    ],
+    [
+     "Chemical Tanker",
+     "신설",
+     "Apparent Specific Gravity (SG) and/or Name of Chemical primarily carried",
+     "",
+     "32",
+     "",
+     ""
+    ],
+    [
+     "Chemical Tanker",
+     "신설",
+     "Name of Chemical primarily carried",
+     "",
+     "32",
+     "",
+     "Pt 7 Ch 6 | -"
+    ],
+    [
+     "Liquefied Gas Carrier",
+     "삭제",
+     "Name of Liquefied Gas when exclusively carried",
+     "19",
+     "",
+     "Pt 7 Ch 5 | -",
+     ""
+    ],
+    [
+     "Liquefied Gas Carrier",
+     "신설",
+     "Name of Liquefied Gas primarily carried",
+     "",
+     "19",
+     "",
+     "Pt 7 Ch 5 | -"
+    ],
+    [
+     "Oil/Chemical Tanker",
+     "삭제",
+     "Name of Chemical when exclusively carried",
+     "45",
+     "",
+     "Pt 7 Ch 6 | -",
+     ""
+    ],
+    [
+     "Oil/Chemical Tanker",
+     "신설",
+     "Name of Chemical primarily carried",
+     "",
+     "45",
+     "",
+     "Pt 7 Ch 6 | -"
+    ],
+    [
+     "Oil/Liquefied Gas Carrier",
+     "삭제",
+     "Name of Liquefied Gas when exclusively carried",
+     "85",
+     "",
+     "Pt 7 Ch 5 | -",
+     ""
+    ],
+    [
+     "Oil/Liquefied Gas Carrier",
+     "신설",
+     "Name of Liquefied Gas primarily carried",
+     "",
+     "85",
+     "",
+     "Pt 7 Ch 5 | -"
+    ],
+    [
+     "Ore/Chemical Carrier",
+     "삭제",
+     "Name of Chemical when exclusively carried",
+     "74",
+     "",
+     "Pt 7 Ch 6 | -",
+     ""
+    ],
+    [
+     "Ore/Chemical Carrier",
+     "신설",
+     "Name of Chemical primarily carried",
+     "",
+     "74",
+     "",
+     "Pt 7 Ch 6 | -"
+    ]
+   ],
+   "only_python": [
+    [
+     "Ch 3",
+     "명칭 변경",
+     "LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) → LFFS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) (DF-LPG, SF-LPG) (DF-Ammonia, SF-Ammonia)",
+     "224",
+     "228",
+     "to ships comply with the requirements of the Rules and Guidance for the Classification of Ships Using Low-flashpoint Fuels in which engines using low-flashpoint fuel are installed, other than ships carrying gas in bulk. (Low-Flashpoint Fuel Ship) | DF-LNG | Dual fuel engines using LNG as fuel are installed | SF-LNG | Single fuel engines using LNG as fuel are installed | DF-Methanol | Dual fuel engines using methyl alcohol as fuel are installed | SF-Methanol | Single fuel engines using methyl alcohol as fuel are installed | DF-Ethanol | Dual fuel engines using ethyl alcohol as fuel are installed | SF-Ethanol | Single fuel engines using ethyl alcohol as fuel are installed",
+     "to ships comply with the requirements of the Rules and Guidance for the Classification of Ships Using Low-flashpoint Fuels in which engines using low-flashpoint fuel are installed, other than ships carrying gas in bulk. (Low-Flashpoint Fuel Ship) <table><tr><td>DF-LNG</td><td>Dual fuel engines using LNG as fuel are installed</td></tr><tr><td>SF-LNG</td><td>Single fuel engines using LNG as fuel are installed</td></tr><tr><td>DF-Methanol</td><td>Dual fuel engines using methyl alcohol as fuel are installed</td></tr><tr><td>SF-Methanol</td><td>Single fuel engines using methyl alcohol as fuel are installed</td></tr><tr><td>DF-Ethanol</td><td>Dual fuel engines using ethyl alcohol as fuel are installed</td></tr><tr><td>SF-Ethanol</td><td>Single fuel engines using ethyl alcohol as fuel are installed</td></tr><tr><td>DF-LPG</td><td>Dual fuel engines using LPG as fuel are installed</td></tr><tr><td>SF-LPG</td><td>Single fuel engines using LPG as fuel are installed</td></tr><tr><td>DF-Ammonia</td><td>Dual fuel engines using Ammonia as fuel are installed</td></tr><tr><td>SF-Ammonia</td><td>Single fuel engines using Ammonia as fuel are installed</td></tr></table>"
+    ],
+    [
+     "Chemical Tanker",
+     "명칭 변경",
+     "Apparent Specific Gravity(SG) or → Apparent Specific Gravity (SG) and/or Name of Chemical primarily carried",
+     "32",
+     "32",
+     "",
+     ""
+    ],
+    [
+     "Chemical Tanker",
+     "명칭 변경",
+     "Name of Chemical when exclusively carried → Name of Chemical primarily carried",
+     "32",
+     "32",
+     "Pt 7 Ch 6 | -",
+     "Pt 7 Ch 6 | -"
+    ],
+    [
+     "Liquefied Gas Carrier",
+     "명칭 변경",
+     "Name of Liquefied Gas when exclusively carried → Name of Liquefied Gas primarily carried",
+     "19",
+     "19",
+     "Pt 7 Ch 5 | -",
+     "Pt 7 Ch 5 | -"
+    ],
+    [
+     "Oil/Chemical Tanker",
+     "명칭 변경",
+     "Name of Chemical when exclusively carried → Name of Chemical primarily carried",
+     "45",
+     "45",
+     "Pt 7 Ch 6 | -",
+     "Pt 7 Ch 6 | -"
+    ],
+    [
+     "Oil/Liquefied Gas Carrier",
+     "명칭 변경",
+     "Name of Liquefied Gas when exclusively carried → Name of Liquefied Gas primarily carried",
+     "85",
+     "85",
+     "Pt 7 Ch 5 | -",
+     "Pt 7 Ch 5 | -"
+    ],
+    [
+     "Ore/Chemical Carrier",
+     "명칭 변경",
+     "Name of Chemical when exclusively carried → Name of Chemical primarily carried",
+     "74",
+     "74",
+     "Pt 7 Ch 6 | -",
+     "Pt 7 Ch 6 | -"
+    ]
+   ],
+   "seconds": 0.031,
+   "kinds": {
+    "신설": 62,
+    "요건 변경": 19,
+    "명칭 변경": 3,
+    "삭제": 16
+   }
+  },
+  "seq": {
+   "rows": 93,
+   "same_bytes": true,
+   "same_order": true,
+   "only_sql": [],
+   "only_python": [],
+   "seconds": 0.053,
+   "kinds": {
+    "신설": 55,
+    "요건 변경": 19,
+    "명칭 변경": 10,
+    "삭제": 9
+   }
+  }
+ },
+ "rename_pairs": {
+  "pairs": 186,
+  "disagree_with_python_at_0.6": {
+   "lev": 1,
+   "trgm": 7,
+   "seq": 0
+  },
+  "seq_max_abs_diff": 0.0
+ },
+ "stored_method": "seq",
+ "changed_pages": {
+  "sql": 60,
+  "csv": 60,
+  "same": true
+ }
+}

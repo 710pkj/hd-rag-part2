@@ -21,3 +21,8 @@ next-env.d.ts
 
 # 공유용 압축 결과물 (tools/make_zip.py)
 /dist/
+
+# DB 실험 노트북 · 스크립트가 다시 실행할 때 쓰는 결과 (보고서에 쓴 결과는 db/edition_diff 바로 아래)
+/db/edition_diff/notebook_out/
+/db/edition_diff/out/
+desktop.ini

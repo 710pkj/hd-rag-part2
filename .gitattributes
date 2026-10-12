@@ -1,0 +1,4 @@
+# 노트북 ⑦이 결과 CSV를 바이트까지 대조하므로 줄 끝 변환을 하지 않음
+/db/edition_diff/*.csv -text
+*.dump binary
+*.lnk binary

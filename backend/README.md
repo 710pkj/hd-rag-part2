@@ -14,9 +14,10 @@ uv pip install --python .venv --reinstall-package torch torch --index-url https:
 .\.venv\Scripts\python -m uvicorn server:app --port 8000
 ```
 
-웹과 함께 띄우려면 바탕화면의 **선급 에이전트 시연** 아이콘(= 상위 폴더 `start-demo.ps1`)을 누른다.
-꺼져 있는 서버만 최소화 창으로 켜고 브라우저(http://localhost:3000)를 연다. 이미 켜져 있으면 브라우저만 연다.
-끌 때는 작업 표시줄의 두 창(에이전트 백엔드, 웹 화면)을 닫는다. 아이콘은 `assets/make_icon.py`로 만든다.
+웹과 함께 띄우려면 **선급 에이전트 시연** 바로 가기(저장소 맨 위 또는 바탕화면 = 상위 폴더 `start-demo.ps1`)를 누른다.
+꺼져 있는 서버만 최소화 창으로 켜고 시연용 크롬 창(http://localhost:3000)을 연다. 이미 켜져 있으면 크롬 창만 연다.
+크롬 창을 닫으면 이번에 켠 두 창(에이전트 백엔드, 웹 화면)과 실행한 PowerShell이 함께 꺼진다. 아이콘은 `assets/make_icon.py`로 만든다.
+노드 흐름과 노드별 방법론은 `../docs/AGENT.md`.
 `.env`는 요청마다 다시 읽으므로 키를 넣은 뒤 서버를 다시 시작하지 않아도 된다.
 
 데이터는 Part 1 제출 폴더(`PART1_DIR`, 기본 `HD융캡디/제출/HD_RAG_Part1`)에서 읽는다: pkl 3개, rules.csv, dev·test 질문, `cache/`, `outputs/kr_edition_diff.csv`.

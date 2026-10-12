@@ -1,0 +1,187 @@
+﻿절,2022 이름,2026 이름,Python SequenceMatcher,SQL levenshtein,SQL trigram,SQL seq_ratio,0.6 판정 (py/lev/trgm/seq)
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),(Cargo name) Ready D,0.195,0.154,0.000,0.195,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),(Cargo name) Ready D(A),0.238,0.192,0.000,0.238,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"(Cargo name) Ready I (FS, ME, AE, B, ME-C, AE-C, B-C)",0.250,0.200,0.000,0.250,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"ARN(SM), ARN(S1), ARN(S2), ARN(BM), ARN(B1), ARN(B2)",0.250,0.233,0.026,0.250,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),Ammonia Ready D,0.154,0.115,0.031,0.154,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),Ammonia Ready D(A),0.200,0.154,0.030,0.200,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"Ammonia Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C, AT)",0.188,0.158,0.018,0.188,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"CEmC-OCCS(R, S)",0.278,0.192,0.000,0.278,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"CS0, CS1, CS2, CS3",0.368,0.192,0.000,0.368,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"Cyber Resilience, Cyber Resilience+, Cyber Resilience(CSMS), Cyber Resilience(CSMS)+, CSMS",0.143,0.097,0.000,0.143,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),ERS(D),0.067,0.038,0.000,0.067,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"ES-ALS, ES-ALS1",0.162,0.115,0.000,0.162,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"ESA-iSG ESA1-iSG, ESA2-iSG",0.261,0.115,0.000,0.261,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"LFFS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) (DF-LPG, SF-LPG) (DF-Ammonia, SF-Ammonia)",0.057,0.150,0.000,0.057,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),LPG Ready D,0.057,0.077,0.000,0.057,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"LPG Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C)",0.207,0.156,0.000,0.207,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),LSN,0.069,0.038,0.000,0.069,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),OCCS Ready D,0.056,0.115,0.000,0.056,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),OCCS Ready D(A),0.108,0.154,0.000,0.108,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"OCCS Ready I (AT, SRat, CT, SRct, AS, CS, AB, RG, PS, LQ)",0.167,0.176,0.000,0.167,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),Oil Recovery (+),0.054,0.038,0.000,0.054,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"PID, MID",0.062,0.038,0.000,0.062,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2, WHIP, WHIP+, HCM)",0.219,0.191,0.000,0.219,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),Smart(INFRA) Smart(SHM) Smart(MHM) Smart(EEM) Smart(NAV),0.206,0.143,0.000,0.206,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"URN(NXX), URN(QXX), URN(RXX), URN(SXX), URN(THR)",0.036,0.000,0.000,0.036,----
+Ch 3,AFP-C AFP-C(1) AFP-C(2) AFP-C(3) AFP-C(FSC),"WHIP, WHIP+",0.118,0.077,0.000,0.118,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",(Cargo name) Ready D,0.149,0.135,0.000,0.149,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",(Cargo name) Ready D(A),0.147,0.154,0.000,0.147,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","(Cargo name) Ready I (FS, ME, AE, B, ME-C, AE-C, B-C)",0.220,0.212,0.000,0.220,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","ARN(SM), ARN(S1), ARN(S2), ARN(BM), ARN(B1), ARN(B2)",0.244,0.154,0.000,0.244,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",Ammonia Ready D,0.062,0.115,0.000,0.062,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",Ammonia Ready D(A),0.091,0.115,0.000,0.091,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","Ammonia Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C, AT)",0.200,0.173,0.000,0.200,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","CEmC-OCCS(R, S)",0.065,0.077,0.000,0.065,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","CS0, CS1, CS2, CS3",0.125,0.077,0.000,0.125,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","Cyber Resilience, Cyber Resilience+, Cyber Resilience(CSMS), Cyber Resilience(CSMS)+, CSMS",0.194,0.139,0.000,0.194,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",ERS(D),0.071,0.058,0.000,0.071,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","ES-ALS, ES-ALS1",0.254,0.154,0.000,0.254,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","ESA-iSG ESA1-iSG, ESA2-iSG",0.222,0.173,0.000,0.222,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","LFFS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) (DF-LPG, SF-LPG) (DF-Ammonia, SF-Ammonia)",0.773,0.637,0.551,0.773,OO-O
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",LPG Ready D,0.098,0.096,0.025,0.098,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","LPG Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C)",0.262,0.212,0.016,0.262,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",LSN,0.109,0.058,0.029,0.109,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",OCCS Ready D,0.097,0.077,0.000,0.097,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",OCCS Ready D(A),0.127,0.096,0.000,0.127,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","OCCS Ready I (AT, SRat, CT, SRct, AS, CS, AB, RG, PS, LQ)",0.023,0.154,0.000,0.023,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",Oil Recovery (+),0.127,0.096,0.000,0.127,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","PID, MID",0.069,0.058,0.000,0.069,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2, WHIP, WHIP+, HCM)",0.121,0.096,0.000,0.121,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)",Smart(INFRA) Smart(SHM) Smart(MHM) Smart(EEM) Smart(NAV),0.106,0.154,0.000,0.106,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","URN(NXX), URN(QXX), URN(RXX), URN(SXX), URN(THR)",0.098,0.135,0.000,0.098,----
+Ch 3,"LFSS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol)","WHIP, WHIP+",0.067,0.038,0.000,0.067,----
+Ch 3,Remote,(Cargo name) Ready D,0.190,0.200,0.000,0.190,----
+Ch 3,Remote,(Cargo name) Ready D(A),0.182,0.188,0.000,0.182,----
+Ch 3,Remote,"(Cargo name) Ready I (FS, ME, AE, B, ME-C, AE-C, B-C)",0.222,0.133,0.000,0.222,----
+Ch 3,Remote,"ARN(SM), ARN(S1), ARN(S2), ARN(BM), ARN(B1), ARN(B2)",0.111,0.067,0.000,0.111,----
+Ch 3,Remote,Ammonia Ready D,0.211,0.231,0.000,0.211,----
+Ch 3,Remote,Ammonia Ready D(A),0.200,0.214,0.000,0.200,----
+Ch 3,Remote,"Ammonia Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C, AT)",0.182,0.105,0.000,0.182,----
+Ch 3,Remote,"CEmC-OCCS(R, S)",0.375,0.300,0.000,0.375,----
+Ch 3,Remote,"CS0, CS1, CS2, CS3",0.000,0.000,0.000,0.000,----
+Ch 3,Remote,"Cyber Resilience, Cyber Resilience+, Cyber Resilience(CSMS), Cyber Resilience(CSMS)+, CSMS",0.103,0.056,0.000,0.103,----
+Ch 3,Remote,ERS(D),0.200,0.167,0.000,0.200,----
+Ch 3,Remote,"ES-ALS, ES-ALS1",0.235,0.091,0.000,0.235,----
+Ch 3,Remote,"ESA-iSG ESA1-iSG, ESA2-iSG",0.154,0.100,0.000,0.154,----
+Ch 3,Remote,"LFFS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) (DF-LPG, SF-LPG) (DF-Ammonia, SF-Ammonia)",0.070,0.062,0.000,0.070,----
+Ch 3,Remote,LPG Ready D,0.267,0.222,0.000,0.267,----
+Ch 3,Remote,"LPG Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C)",0.211,0.125,0.000,0.211,----
+Ch 3,Remote,LSN,0.000,0.000,0.000,0.000,----
+Ch 3,Remote,OCCS Ready D,0.250,0.200,0.000,0.250,----
+Ch 3,Remote,OCCS Ready D(A),0.235,0.182,0.000,0.235,----
+Ch 3,Remote,"OCCS Ready I (AT, SRat, CT, SRct, AS, CS, AB, RG, PS, LQ)",0.150,0.088,0.000,0.150,----
+Ch 3,Remote,Oil Recovery (+),0.471,0.364,0.000,0.471,----
+Ch 3,Remote,"PID, MID",0.167,0.000,0.000,0.167,----
+Ch 3,Remote,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2, WHIP, WHIP+, HCM)",0.075,0.043,0.000,0.075,----
+Ch 3,Remote,Smart(INFRA) Smart(SHM) Smart(MHM) Smart(EEM) Smart(NAV),0.167,0.095,0.000,0.167,----
+Ch 3,Remote,"URN(NXX), URN(QXX), URN(RXX), URN(SXX), URN(THR)",0.111,0.067,0.000,0.111,----
+Ch 3,Remote,"WHIP, WHIP+",0.000,0.000,0.000,0.000,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",(Cargo name) Ready D,0.148,0.103,0.000,0.148,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",(Cargo name) Ready D(A),0.145,0.128,0.000,0.145,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","(Cargo name) Ready I (FS, ME, AE, B, ME-C, AE-C, B-C)",0.232,0.179,0.000,0.232,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","ARN(SM), ARN(S1), ARN(S2), ARN(BM), ARN(B1), ARN(B2)",0.261,0.231,0.000,0.261,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",Ammonia Ready D,0.154,0.077,0.000,0.154,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",Ammonia Ready D(A),0.151,0.103,0.000,0.151,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","Ammonia Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C, AT)",0.234,0.128,0.000,0.234,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","CEmC-OCCS(R, S)",0.122,0.103,0.000,0.122,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","CS0, CS1, CS2, CS3",0.196,0.179,0.000,0.196,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","Cyber Resilience, Cyber Resilience+, Cyber Resilience(CSMS), Cyber Resilience(CSMS)+, CSMS",0.216,0.139,0.000,0.216,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",ERS(D),0.093,0.103,0.000,0.093,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","ES-ALS, ES-ALS1",0.200,0.205,0.000,0.200,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","ESA-iSG ESA1-iSG, ESA2-iSG",0.305,0.282,0.044,0.305,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","LFFS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) (DF-LPG, SF-LPG) (DF-Ammonia, SF-Ammonia)",0.185,0.175,0.000,0.185,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",LPG Ready D,0.167,0.077,0.000,0.167,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","LPG Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C)",0.254,0.205,0.000,0.254,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",LSN,0.048,0.026,0.000,0.048,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",OCCS Ready D,0.204,0.077,0.000,0.204,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",OCCS Ready D(A),0.200,0.103,0.000,0.200,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","OCCS Ready I (AT, SRat, CT, SRct, AS, CS, AB, RG, PS, LQ)",0.274,0.205,0.000,0.274,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",Oil Recovery (+),0.080,0.051,0.000,0.080,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","PID, MID",0.089,0.051,0.000,0.089,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2, WHIP, WHIP+, HCM)",0.907,0.830,0.750,0.907,OOOO
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)",Smart(INFRA) Smart(SHM) Smart(MHM) Smart(EEM) Smart(NAV),0.123,0.238,0.017,0.123,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","URN(NXX), URN(QXX), URN(RXX), URN(SXX), URN(THR)",0.087,0.103,0.000,0.087,----
+Ch 3,"SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2 HCM)","WHIP, WHIP+",0.085,0.051,0.000,0.085,----
+Ch 3,"URN-T(xx), URN-Q(xx)",(Cargo name) Ready D,0.222,0.133,0.000,0.222,----
+Ch 3,"URN-T(xx), URN-Q(xx)",(Cargo name) Ready D(A),0.214,0.125,0.000,0.214,----
+Ch 3,"URN-T(xx), URN-Q(xx)","(Cargo name) Ready I (FS, ME, AE, B, ME-C, AE-C, B-C)",0.143,0.067,0.000,0.143,----
+Ch 3,"URN-T(xx), URN-Q(xx)","ARN(SM), ARN(S1), ARN(S2), ARN(BM), ARN(B1), ARN(B2)",0.190,0.133,0.000,0.190,----
+Ch 3,"URN-T(xx), URN-Q(xx)",Ammonia Ready D,0.080,0.077,0.000,0.080,----
+Ch 3,"URN-T(xx), URN-Q(xx)",Ammonia Ready D(A),0.077,0.071,0.000,0.077,----
+Ch 3,"URN-T(xx), URN-Q(xx)","Ammonia Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C, AT)",0.080,0.053,0.000,0.080,----
+Ch 3,"URN-T(xx), URN-Q(xx)","CEmC-OCCS(R, S)",0.091,0.000,0.000,0.091,----
+Ch 3,"URN-T(xx), URN-Q(xx)","CS0, CS1, CS2, CS3",0.000,0.000,0.000,0.000,----
+Ch 3,"URN-T(xx), URN-Q(xx)","Cyber Resilience, Cyber Resilience+, Cyber Resilience(CSMS), Cyber Resilience(CSMS)+, CSMS",0.095,0.056,0.000,0.095,----
+Ch 3,"URN-T(xx), URN-Q(xx)",ERS(D),0.125,0.083,0.000,0.125,----
+Ch 3,"URN-T(xx), URN-Q(xx)","ES-ALS, ES-ALS1",0.000,0.000,0.000,0.000,----
+Ch 3,"URN-T(xx), URN-Q(xx)","ESA-iSG ESA1-iSG, ESA2-iSG",0.000,0.000,0.000,0.000,----
+Ch 3,"URN-T(xx), URN-Q(xx)","LFFS (DF-LNG, SF-LNG) (DF-Methanol, SF-Methanol) (DF-Ethanol, SF-Ethanol) (DF-LPG, SF-LPG) (DF-Ammonia, SF-Ammonia)",0.065,0.037,0.000,0.065,----
+Ch 3,"URN-T(xx), URN-Q(xx)",LPG Ready D,0.095,0.000,0.000,0.095,----
+Ch 3,"URN-T(xx), URN-Q(xx)","LPG Ready I (SR, FT, TV, FS, BS, ME, AE, B, ME-C, AE-C, B-C)",0.091,0.062,0.000,0.091,----
+Ch 3,"URN-T(xx), URN-Q(xx)",LSN,0.133,0.083,0.000,0.133,----
+Ch 3,"URN-T(xx), URN-Q(xx)",OCCS Ready D,0.091,0.000,0.000,0.091,----
+Ch 3,"URN-T(xx), URN-Q(xx)",OCCS Ready D(A),0.087,0.000,0.000,0.087,----
+Ch 3,"URN-T(xx), URN-Q(xx)","OCCS Ready I (AT, SRat, CT, SRct, AS, CS, AB, RG, PS, LQ)",0.174,0.088,0.000,0.174,----
+Ch 3,"URN-T(xx), URN-Q(xx)",Oil Recovery (+),0.174,0.000,0.000,0.174,----
+Ch 3,"URN-T(xx), URN-Q(xx)","PID, MID",0.000,0.000,0.000,0.000,----
+Ch 3,"URN-T(xx), URN-Q(xx)","SeaTrust (DSA1, DSA2, FSA1, FSA2, FSA3, SPR1, SPR2, WHIP, WHIP+, HCM)",0.102,0.064,0.000,0.102,----
+Ch 3,"URN-T(xx), URN-Q(xx)",Smart(INFRA) Smart(SHM) Smart(MHM) Smart(EEM) Smart(NAV),0.185,0.095,0.000,0.185,----
+Ch 3,"URN-T(xx), URN-Q(xx)","URN(NXX), URN(QXX), URN(RXX), URN(SXX), URN(THR)",0.524,0.367,0.375,0.524,----
+Ch 3,"URN-T(xx), URN-Q(xx)","WHIP, WHIP+",0.000,0.000,0.000,0.000,----
+Ch 4,"HMS, HMS1","AH(F, P)",0.182,0.143,0.000,0.182,----
+Ch 4,"HMS, HMS1","AHT(F, P)",0.167,0.143,0.000,0.167,----
+Ch 4,"HMS, HMS1",BCM,0.200,0.143,0.000,0.200,----
+Ch 4,"HMS, HMS1","ETC(1), ETC(2), ETC(1 or 2, except sloptanks)",0.108,0.033,0.000,0.108,----
+Ch 4,"HMS, HMS1","HMS (G, W, SD, S, U, LS)",0.444,0.364,0.188,0.444,----
+Ch 4,"HMS, HMS1",HVSC-Ready D,0.235,0.200,0.059,0.235,----
+Ch 4,"HMS, HMS1",HVSC-Ready I,0.235,0.200,0.059,0.235,----
+Ch 4,"HMS, HMS1","LG(F, P, OC, PA, IP)",0.000,0.000,0.000,0.000,----
+Ch 4,"HMS, HMS1",Machinery Items,0.286,0.143,0.000,0.286,----
+Ch 4,"HMS, HMS1",PMS(S),0.545,0.429,0.000,0.545,----
+Ch 4,"HMS, HMS1",SolarPV,0.143,0.000,0.000,0.143,----
+Ch 4,HVSC-Partial,"AH(F, P)",0.267,0.091,0.000,0.267,----
+Ch 4,HVSC-Partial,"AHT(F, P)",0.250,0.182,0.000,0.250,----
+Ch 4,HVSC-Partial,BCM,0.143,0.091,0.000,0.143,----
+Ch 4,HVSC-Partial,"ETC(1), ETC(2), ETC(1 or 2, except sloptanks)",0.146,0.133,0.000,0.146,----
+Ch 4,HVSC-Partial,"HMS (G, W, SD, S, U, LS)",0.273,0.182,0.043,0.273,----
+Ch 4,HVSC-Partial,HVSC-Ready D,0.476,0.364,0.211,0.476,----
+Ch 4,HVSC-Partial,HVSC-Ready I,0.571,0.455,0.211,0.571,----
+Ch 4,HVSC-Partial,"LG(F, P, OC, PA, IP)",0.381,0.182,0.045,0.381,----
+Ch 4,HVSC-Partial,Machinery Items,0.160,0.143,0.000,0.160,----
+Ch 4,HVSC-Partial,PMS(S),0.133,0.091,0.000,0.133,----
+Ch 4,HVSC-Partial,SolarPV,0.333,0.273,0.000,0.333,----
+Ch 4,Smart(INFRA),"AH(F, P)",0.286,0.200,0.000,0.286,----
+Ch 4,Smart(INFRA),"AHT(F, P)",0.400,0.300,0.000,0.400,----
+Ch 4,Smart(INFRA),BCM,0.154,0.000,0.000,0.154,----
+Ch 4,Smart(INFRA),"ETC(1), ETC(2), ETC(1 or 2, except sloptanks)",0.150,0.100,0.000,0.150,----
+Ch 4,Smart(INFRA),"HMS (G, W, SD, S, U, LS)",0.095,0.091,0.000,0.095,----
+Ch 4,Smart(INFRA),HVSC-Ready D,0.200,0.000,0.000,0.200,----
+Ch 4,Smart(INFRA),HVSC-Ready I,0.300,0.000,0.000,0.300,----
+Ch 4,Smart(INFRA),"LG(F, P, OC, PA, IP)",0.200,0.000,0.000,0.200,----
+Ch 4,Smart(INFRA),Machinery Items,0.417,0.286,0.000,0.417,----
+Ch 4,Smart(INFRA),PMS(S),0.143,0.100,0.000,0.143,----
+Ch 4,Smart(INFRA),SolarPV,0.353,0.200,0.056,0.353,----
+Chemical Tanker,Apparent Specific Gravity(SG) or,Apparent Specific Gravity (SG) and/or Name of Chemical primarily carried,0.621,0.450,0.391,0.621,O--O
+Chemical Tanker,Apparent Specific Gravity(SG) or,Name of Chemical primarily carried,0.175,0.233,0.000,0.175,----
+Chemical Tanker,Name of Chemical when exclusively carried,Apparent Specific Gravity (SG) and/or Name of Chemical primarily carried,0.500,0.333,0.256,0.500,----
+Chemical Tanker,Name of Chemical when exclusively carried,Name of Chemical primarily carried,0.727,0.667,0.478,0.727,OO-O
+Container Ship,"LS(CL, RS, HHS or HHT)",LS(HHS or HHT),0.833,0.714,0.625,0.833,OOOO
+Container Ship,"LS(CL, RS, HHS or HHT)","OPEN-TOP(CC)(Hold Nos. a, b, ...)",0.125,0.056,0.000,0.125,----
+Container Ship,"LS(CL, RS, HHS or HHT)","OPEN-TOP(Hold Nos. a, b, ...)",0.133,0.062,0.000,0.133,----
+Liquefied Gas Carrier,1NV,Name of Liquefied Gas primarily carried,0.054,0.000,0.000,0.054,----
+Liquefied Gas Carrier,Name of Liquefied Gas when exclusively carried,Name of Liquefied Gas primarily carried,0.757,0.700,0.510,0.757,OO-O
+Oil/Chemical Tanker,Apparent Specific Gravity(SG) or Name of Chemical when exclusively carried,Apparent Specific Gravity(SG) and/or,0.581,0.444,0.357,0.581,----
+Oil/Chemical Tanker,Apparent Specific Gravity(SG) or Name of Chemical when exclusively carried,Name of Chemical primarily carried,0.516,0.381,0.267,0.516,----
+Oil/Chemical Tanker,Name of Chemical when exclusively carried,Apparent Specific Gravity(SG) and/or,0.242,0.139,0.000,0.242,----
+Oil/Chemical Tanker,Name of Chemical when exclusively carried,Name of Chemical primarily carried,0.727,0.667,0.478,0.727,OO-O
+Oil/Liquefied Gas Carrier,1NV,Name of Liquefied Gas primarily carried,0.054,0.000,0.000,0.054,----
+Oil/Liquefied Gas Carrier,Name of Liquefied Gas when exclusively carried,Name of Liquefied Gas primarily carried,0.757,0.700,0.510,0.757,OO-O
+Ore/Chemical Carrier,Apparent Specific Gravity(SG) or,Apparent Specific Gravity (SG) and/or,0.947,0.900,0.788,0.947,OOOO
+Ore/Chemical Carrier,Apparent Specific Gravity(SG) or,LIQBC-1,0.061,0.074,0.000,0.061,----
+Ore/Chemical Carrier,Apparent Specific Gravity(SG) or,LIQBC-2,0.061,0.074,0.000,0.061,----
+Ore/Chemical Carrier,Apparent Specific Gravity(SG) or,Name of Chemical primarily carried,0.175,0.233,0.000,0.175,----
+Ore/Chemical Carrier,Name of Chemical when exclusively carried,Apparent Specific Gravity (SG) and/or,0.242,0.139,0.000,0.242,----
+Ore/Chemical Carrier,Name of Chemical when exclusively carried,LIQBC-1,0.048,0.083,0.000,0.048,----
+Ore/Chemical Carrier,Name of Chemical when exclusively carried,LIQBC-2,0.048,0.083,0.000,0.048,----
+Ore/Chemical Carrier,Name of Chemical when exclusively carried,Name of Chemical primarily carried,0.727,0.667,0.478,0.727,OO-O
