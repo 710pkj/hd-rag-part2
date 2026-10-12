@@ -40,6 +40,8 @@ export default function App() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [health, setHealth] = useState<Health | null>(null);
+  // 개발자 모드: 검색 평가 칸 · 정답 표시 · 다른 검색 구성 비교. 평소(사용자 화면)에는 숨김. 이 브라우저에만 기억
+  const [devMode, setDevMode] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -47,6 +49,26 @@ export default function App() {
   const active = turns.find((t) => t.id === activeId) ?? null;
   const ids = active?.pages?.runs[run] ?? [];
   const cited = useMemo(() => new Set(active?.sentences.flatMap((s) => s.cites) ?? []), [active]);
+  // 쪽 → 그 쪽에서 인용한 구절들 (근거 페이지에 노랗게 표시)
+  const highlights = useMemo(() => {
+    const m = new Map<string, string[]>();
+    for (const p of active?.passages ?? []) m.set(p.page, [...new Set([...(m.get(p.page) ?? []), p.quote])]);
+    return m;
+  }, [active]);
+
+  useEffect(() => {
+    try {
+      setDevMode(localStorage.getItem("devMode") === "1");
+    } catch {}
+  }, []);
+  const toggleDev = () => {
+    const next = !devMode;
+    setDevMode(next);
+    if (!next) setRun("final");
+    try {
+      localStorage.setItem("devMode", next ? "1" : "0");
+    } catch {}
+  };
   const lastLen = turns.at(-1)?.sentences.reduce((n, s) => n + s.text.length, 0) ?? 0;
 
   useEffect(() => {
@@ -80,7 +102,23 @@ export default function App() {
   function apply(id: string, ev: AskEvent) {
     switch (ev.type) {
       case "meta":
-        return update(id, (t) => ({ ...t, sample: ev.sample, qid: ev.qid, qtype: QUESTIONS.find((q) => q.qid === ev.qid)?.qtype ?? null }));
+        return update(id, (t) => ({
+          ...t,
+          sample: ev.sample,
+          qid: ev.qid,
+          runId: ev.run_id,
+          qtype: QUESTIONS.find((q) => q.qid === ev.qid)?.qtype ?? null,
+        }));
+      case "clarify":
+        return update(id, (t) => ({ ...t, clarify: { assumption: ev.assumption, ask: ev.ask, options: ev.options } }));
+      case "passages":
+        return update(id, (t) => ({ ...t, passages: ev.items }));
+      case "table":
+        return update(id, (t) => ({ ...t, table: ev.table }));
+      case "cards":
+        return update(id, (t) => ({ ...t, cards: ev.cards }));
+      case "not_found":
+        return update(id, (t) => ({ ...t, notFound: { reason: ev.reason, nearest: ev.nearest } }));
       case "node":
         return update(id, (t) => ({ ...t, nodes: { ...t.nodes, [ev.id]: { status: ev.status, detail: ev.detail ?? t.nodes[ev.id]?.detail } } }));
       case "pages":
@@ -109,7 +147,7 @@ export default function App() {
       case "web":
         return update(id, (t) => ({ ...t, web: ev.results }));
       case "answer_reset":
-        return update(id, (t) => ({ ...t, sentences: [], rewrites: (t.rewrites ?? 0) + 1 }));
+        return update(id, (t) => ({ ...t, sentences: [], passages: [], table: null, cards: [], rewrites: (t.rewrites ?? 0) + 1 }));
       case "notice":
         return update(id, (t) => ({ ...t, notices: [...t.notices, ev.message] }));
       case "done":
@@ -119,20 +157,40 @@ export default function App() {
     }
   }
 
-  async function ask(question: string, qid?: string) {
+  // filtersOverride: 가정 막대에서 다른 문서 범위를 골라 같은 질문을 다시 물을 때
+  async function ask(question: string, qid?: string, filtersOverride?: DocId[]) {
     if (running) return;
     const id = crypto.randomUUID();
-    const sent = { filters, attachments };
+    const scope = filtersOverride ?? filters;
+    const sent = { filters: scope, attachments };
     setTurns((ts) => [
       ...ts,
-      { id, question, qid: qid ?? null, qtype: null, sample: false, ...sent, nodes: pendingNodes(), sentences: [], pages: null, web: [], notices: [], running: true },
+      {
+        id,
+        question,
+        qid: qid ?? null,
+        qtype: null,
+        sample: false,
+        ...sent,
+        nodes: pendingNodes(),
+        sentences: [],
+        passages: [],
+        table: null,
+        cards: [],
+        notFound: null,
+        clarify: null,
+        pages: null,
+        web: [],
+        notices: [],
+        running: true,
+      },
     ]);
     setActiveId(id);
     setAttachments([]);
     const ac = new AbortController();
     abortRef.current = ac;
     try {
-      const body: AskRequest = { question, qid, filters, nodes: toggles, attachments };
+      const body: AskRequest = { question, qid, filters: scope, nodes: toggles, attachments };
       const res = await fetch("/api/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ac.signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       for await (const ev of readSse(res)) apply(id, ev);
@@ -167,7 +225,7 @@ export default function App() {
       setIndex(here);
       return;
     }
-    const other = (t.pages?.runMeta ?? RUNS).find((r) => runs[r.key]?.includes(pageId));
+    const other = devMode ? (t.pages?.runMeta ?? RUNS).find((r) => runs[r.key]?.includes(pageId)) : undefined;
     if (other) {
       setRun(other.key);
       setIndex(runs[other.key].indexOf(pageId));
@@ -192,27 +250,39 @@ export default function App() {
         running={running}
         health={health}
         hasTurns={turns.length > 0}
+        devMode={devMode}
+        onDevMode={toggleDev}
         onReset={() => {
           setTurns([]);
           setActiveId(null);
           setIndex(0);
         }}
       />
-      <main className="main">
+      <main className={`main${devMode ? "" : " no-eval"}`}>
         <section className="panel chat-panel" aria-label="대화">
           <div className="messages">
             {turns.length === 0 ? (
               <div className="chat-empty">
                 <h2>선급 규정을 물어보세요</h2>
                 <p className="muted">
-                  답변의 근거 페이지는 가운데에 겹쳐 쌓이고, 정답이 있는 테스트 질문은 오른쪽에 네 가지 지표와 페이지 순위가 나옵니다.
+                  답변의 근거 페이지는 오른쪽에 겹쳐 쌓이고, 답변이 인용한 구절은 페이지에 노란색으로 표시됩니다.
+                  {devMode && " 개발자 모드에서는 정답이 있는 테스트 질문의 네 가지 지표와 페이지 순위가 함께 나옵니다."}
                 </p>
                 <p className="sub-head">테스트 질문으로 시작하기</p>
                 <QuestionList questions={QUESTIONS} onPick={pickTest} />
               </div>
             ) : (
               turns.map((t) => (
-                <Turn key={t.id} turn={t} active={t.id === activeId} onActivate={() => activate(t)} onCite={(c) => cite(t, c)} docs={DOCS} />
+                <Turn
+                  key={t.id}
+                  turn={t}
+                  active={t.id === activeId}
+                  onActivate={() => activate(t)}
+                  onCite={(c) => cite(t, c)}
+                  onClarify={(f) => ask(t.question, undefined, f)}
+                  busy={running}
+                  docs={DOCS}
+                />
               ))
             )}
             <div ref={endRef} />
@@ -232,7 +302,7 @@ export default function App() {
         <div className="right">
           <StackPanel
             ids={ids}
-            rels={active?.pages?.rels ?? null}
+            rels={devMode ? (active?.pages?.rels ?? null) : null}
             cited={cited}
             index={Math.min(index, Math.max(0, ids.length - 1))}
             onIndex={setIndex}
@@ -242,31 +312,34 @@ export default function App() {
             }}
             docs={DOCS}
             runLabel={runLabel}
+            highlights={highlights}
           />
-          <EvalPanel
-            runs={active?.pages?.runs ?? null}
-            rels={active?.pages?.rels ?? null}
-            run={run}
-            onRun={(k) => {
-              const cur = ids[index];
-              const next = active?.pages?.runs[k] ?? [];
-              setRun(k);
-              setIndex(Math.max(0, cur ? next.indexOf(cur) : 0));
-            }}
-            runMeta={runMeta}
-            index={index}
-            onIndex={setIndex}
-            cited={cited}
-            docs={DOCS}
-          />
+          {devMode && (
+            <EvalPanel
+              runs={active?.pages?.runs ?? null}
+              rels={active?.pages?.rels ?? null}
+              run={run}
+              onRun={(k) => {
+                const cur = ids[index];
+                const next = active?.pages?.runs[k] ?? [];
+                setRun(k);
+                setIndex(Math.max(0, cur ? next.indexOf(cur) : 0));
+              }}
+              runMeta={runMeta}
+              index={index}
+              onIndex={setIndex}
+              cited={cited}
+              docs={DOCS}
+            />
+          )}
         </div>
       </main>
 
       {lightbox?.mode === "stack" && ids.length > 0 && (
-        <Lightbox ids={ids} index={index} onIndex={setIndex} onClose={() => setLightbox(null)} docs={DOCS} />
+        <Lightbox ids={ids} index={index} onIndex={setIndex} onClose={() => setLightbox(null)} docs={DOCS} highlights={highlights} />
       )}
       {lightbox?.mode === "single" && (
-        <Lightbox ids={[lightbox.id]} index={0} onIndex={() => {}} onClose={() => setLightbox(null)} docs={DOCS} />
+        <Lightbox ids={[lightbox.id]} index={0} onIndex={() => {}} onClose={() => setLightbox(null)} docs={DOCS} highlights={highlights} />
       )}
       {toast && (
         <div className="toast" role="status">

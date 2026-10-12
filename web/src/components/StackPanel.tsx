@@ -14,9 +14,10 @@ type Props = {
   onOpen: (i: number) => void;
   docs: Record<string, DocMeta>;
   runLabel: string | null;
+  highlights?: Map<string, string[]>;
 };
 
-export function StackPanel({ ids, rels, cited, index, onIndex, onOpen, docs, runLabel }: Props) {
+export function StackPanel({ ids, rels, cited, index, onIndex, onOpen, docs, runLabel, highlights }: Props) {
   const id = ids[index];
   const p = id ? parsePageId(id) : null;
   const doc = p ? docs[p.doc] : null;
@@ -36,7 +37,7 @@ export function StackPanel({ ids, rels, cited, index, onIndex, onOpen, docs, run
       </header>
 
       <div className="stack-body">
-        <PageStack ids={ids} rels={rels} cited={cited} index={index} onIndex={onIndex} onOpen={onOpen} docs={docs} />
+        <PageStack ids={ids} rels={rels} cited={cited} index={index} onIndex={onIndex} onOpen={onOpen} docs={docs} highlights={highlights} />
         {ids.length > 0 && (
           <nav className="rail" aria-label="순위로 이동">
             {ids.map((pid, i) => {

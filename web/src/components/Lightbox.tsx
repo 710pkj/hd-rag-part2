@@ -11,9 +11,10 @@ type Props = {
   onIndex: (i: number) => void;
   onClose: () => void;
   docs: Record<string, DocMeta>;
+  highlights?: Map<string, string[]>;
 };
 
-export function Lightbox({ ids, index, onIndex, onClose, docs }: Props) {
+export function Lightbox({ ids, index, onIndex, onClose, docs, highlights }: Props) {
   const id = ids[index];
   const p = parsePageId(id);
   const doc = p ? docs[p.doc] : null;
@@ -46,7 +47,7 @@ export function Lightbox({ ids, index, onIndex, onClose, docs }: Props) {
         </button>
       </div>
       <div className="lightbox-page" onClick={(e) => e.stopPropagation()}>
-        <PdfPage url={doc.url} page={p.page} width={1600} alt={`${doc.label} ${p.page}쪽`} />
+        <PdfPage url={doc.url} page={p.page} width={1600} alt={`${doc.label} ${p.page}쪽`} highlights={highlights?.get(id)} />
       </div>
     </div>
   );

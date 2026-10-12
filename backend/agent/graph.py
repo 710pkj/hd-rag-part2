@@ -7,6 +7,8 @@
 
 각 노드는 get_stream_writer()로 진행 이벤트를 보낸다. 웹 서버는 stream_mode="custom"으로 받아 SSE로 넘긴다.
 이벤트 형식은 web/src/lib/types.ts의 AskEvent와 같다.
+화면용 이벤트: 질문 분석이 가정 · 되묻기(clarify), 근거가 없으면 답변 생성이 찾지 못함(not_found),
+최종 답이 정해지면 finalize()가 인용 구절(passages) · 질문 유형별 표(table) 또는 노테이션 카드(cards)를 보낸다 (agent/present.py).
 """
 import re
 import time
@@ -15,10 +17,11 @@ from typing import TypedDict
 from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
 
+from rag import entities as ENT
 from rag import part1 as P
 from rag import query_intent as QI
 
-from . import llm
+from . import llm, present
 from .tools import DOC_LABEL, edition_diff, excerpt, has_tavily, search_documents, terms_of, web_search
 
 DOC_SHORT = {"KR2022": "KR 2022", "KR2026": "KR 2026", "ABS2025": "ABS 2025"}
@@ -70,6 +73,8 @@ class AgentState(TypedDict, total=False):
     gen_round: int
     feedback: str
     first_pages: list      # 첫 검색의 상위 쪽 (재검색이 더 나쁠 때 대비)
+    table: list            # 선급 비교표 행 (답변 생성 LLM이 함께 만들고 근거 검증을 거침)
+    not_found: bool        # 근거를 찾지 못해 답하지 않음
 
 
 def on(state, node):
@@ -100,8 +105,13 @@ def analyze(state: AgentState):
         parts.append(f"정답이 있는 {gt['qid']} 질문")
     if state.get("attachments"):
         parts.append(f"첨부 {len(state['attachments'])}개는 아직 처리하지 않음")
+    c = present.clarify(q, state.get("filters") or [], {**info, **qi})
+    if c:   # 막지 않는 되묻기: 기본 가정으로 답하고, 다른 범위로 다시 물을 버튼을 준다
+        emit(type="clarify", **c)
+        parts.append("가정: " + c["assumption"])
     node_event("analyze", "done", " · ".join(parts))
-    return {"analysis": {**info, **qi}, "gt": gt, "attempt": 0, "gen_round": 0, "web": [], "diff_rows": []}
+    return {"analysis": {**info, **qi}, "gt": gt, "attempt": 0, "gen_round": 0, "web": [], "diff_rows": [], "table": [],
+            "not_found": False}
 
 
 def rewrite(state: AgentState):
@@ -219,43 +229,79 @@ def generate(state: AgentState):
         stream_sentences(sents)
         node_event("generate", "done", "키 없음")
         return {"sentences": sents, "gen_round": rnd}
+    g = state.get("grade") or {}
+    if g and not g.get("answerable", True) and state.get("attempt", 1) >= 2 and not state.get("web"):
+        # 재검색까지 했는데도 근거가 없고 웹 결과도 없으면, 지어내지 않고 "찾지 못함"으로 답한다
+        sents = [{"text": "검색한 문서에서 이 질문에 답할 근거를 찾지 못했습니다.", "cites": []}]
+        emit(type="not_found", reason=g.get("reason") or "근거 판정에서 관련 페이지를 찾지 못함",
+             nearest=list(state.get("ranking", [])[:5]))
+        stream_sentences(sents)
+        node_event("generate", "done", "근거 부족 → 답하지 않음 (가까운 페이지만 안내)")
+        return {"sentences": sents, "gen_round": rnd, "not_found": True, "table": []}
     sources = context_sources(state)
     lang = "Korean" if re.search(r"[가-힣]", state["question"]) else "English"   # 질문 언어로 답하게 명시
     user = (f"Question: {state['question']}\nAnswer language: {lang}\n\nSources:\n"
             + "\n\n".join(f"[{s['id']}] {s['title']}\n{s['text']}" for s in sources))
+    # 비교표는 질문에 선급이 둘 이상 '적혀' 있을 때만 (선급이 없는 질문도 내부에서는 KR · ABS 모두로 찾지만 비교 질문은 아님)
+    socs = [s for s, rx in QI.SOCIETY_RE.items() if rx.search(state["question"])]
+    compare = len(socs) >= 2
+    if compare:   # 선급 비교 질문이면 비교표도 함께 (행마다 인용 → 근거 검증에서 문장처럼 판정)
+        user += TABLE_TASK.format(cols=", ".join(f'"{s}": "<short text or ->"' for s in socs))
     if rnd > 1 and state.get("feedback"):
         user += (f"\n\nA checker found these sentences in your previous answer NOT supported by their cited sources:\n{state['feedback']}\n"
                  "Write the answer again. Delete each of those claims unless a source above states it explicitly; do not repeat them. "
                  "If a source shows something is absent from a list, you may say it is not listed there.")
-    out = llm.chat_json(GENERATE_SYSTEM, user, max_tokens=1800)
+    out = llm.chat_json(GENERATE_SYSTEM, user, max_tokens=2400 if compare else 1800)
     valid = {s["id"] for s in sources}
     sents = []
     for s in out.get("sentences", []):
+        if not isinstance(s, dict):   # 대체 모델이 문장을 글자열로만 줄 때
+            s = {"text": str(s), "cites": []}
         text, inline = strip_inline_ids(" ".join(str(s.get("text", "")).split()))
         if text:   # 문장 안에 직접 쓴 출처 id는 떼어 인용으로 옮긴다
             sents.append({"text": text, "cites": [c for c in dict.fromkeys([*s.get("cites", []), *inline]) if c in valid]})
     if not sents:
         sents = [{"text": "문서에서 이 질문에 답할 근거를 찾지 못했습니다.", "cites": []}]
+    table = []
+    for r in (out.get("table") or [])[:6] if compare else []:
+        if isinstance(r, dict) and str(r.get("item", "")).strip():
+            vals = {s: strip_inline_ids(" ".join(str(r.get(s, "-")).split()))[0] or "-" for s in socs}
+            table.append({"item": " ".join(str(r["item"]).split()), "vals": vals,
+                          "cites": [c for c in dict.fromkeys(r.get("cites") or []) if c in valid]})
     stream_sentences(sents)
-    node_event("generate", "done", f"문장 {len(sents)}개 · 인용 {sum(len(s['cites']) for s in sents)}개 · 근거 {len(sources)}건" + (f" · {rnd}번째 생성" if rnd > 1 else "") + llm.model_note())
-    return {"sentences": sents, "gen_round": rnd}
+    node_event("generate", "done", f"문장 {len(sents)}개 · 인용 {sum(len(s['cites']) for s in sents)}개 · 근거 {len(sources)}건"
+               + (f" · 비교표 {len(table)}행" if table else "") + (f" · {rnd}번째 생성" if rnd > 1 else "") + llm.model_note())
+    return {"sentences": sents, "gen_round": rnd, "table": table}
 
 
 def verify(state: AgentState):
     sents = state["sentences"]
+    rows = state.get("table") or []
     if not on(state, "verify"):
         node_event("verify", "skipped", "꺼짐")
+        finalize(state, sents)
         return {"verify": []}
     if not llm.has_key() or not any(s["cites"] for s in sents):
         node_event("verify", "skipped", "인용이 없음" if llm.has_key() else "GROQ_API_KEY 없음")
+        finalize(state, sents)
         return {"verify": []}
     node_event("verify", "running")
     by_id = {s["id"]: s for s in context_sources(state)}
-    used = sorted({c for s in sents for c in s["cites"]})
+    row_sents = [{"text": f"{r['item']} — " + "; ".join(f"{k}: {v}" for k, v in r["vals"].items()), "cites": r["cites"]} for r in rows]
+    judged_all = sents + row_sents                      # 비교표 행도 문장처럼 판정 (번호는 문장 뒤에 이어 붙임)
+    used = sorted({c for s in judged_all for c in s["cites"]})
     ctx = "\n\n".join(f"[{c}]\n{by_id[c]['text']}" for c in used if c in by_id)
-    lines = "\n".join(f"{i}. {s['text']}  (cites: {', '.join(s['cites']) or 'none'})" for i, s in enumerate(sents))
-    out = llm.chat_json(VERIFY_SYSTEM, f"Question: {state['question']}\n\nSources:\n{ctx}\n\nSentences:\n{lines}", fast=True, max_tokens=900)
+    lines = "\n".join(f"{i}. {s['text']}  (cites: {', '.join(s['cites']) or 'none'})" for i, s in enumerate(judged_all))
+    out = llm.chat_json(VERIFY_SYSTEM, f"Question: {state['question']}\n\nSources:\n{ctx}\n\nSentences:\n{lines}", fast=True,
+                        max_tokens=900 + 120 * len(rows))
     judged = {int(r.get("index", -1)): r for r in out.get("results", []) if str(r.get("index", "")).lstrip("-").isdigit()}
+    row_status = []
+    for k, r in enumerate(row_sents):
+        j = judged.get(len(sents) + k, {})
+        st = j.get("status") if j.get("status") in ("supported", "inferred", "unsupported") else "inferred"
+        if not r["cites"] and st == "supported":
+            st = "inferred"
+        row_status.append({"status": st, "note": str(j.get("note", ""))})
     results = []
     for i, s in enumerate(sents):
         r = judged.get(i, {})
@@ -283,7 +329,11 @@ def verify(state: AgentState):
         detail += f" → 근거 없는 문장 {len(dropped)}개 뺌"
         bad = []
     emit(type="verify", results=results)
+    if row_status:
+        detail += f" · 비교표 {len(row_status)}행 중 근거 확인 {sum(r['status'] == 'supported' for r in row_status)}"
     node_event("verify", "done", detail + llm.model_note())
+    if not (bad and state.get("gen_round", 1) < 2):     # 다시 생성하지 않으면 이 답이 최종 → 인용 구절 · 표 · 카드
+        finalize(state, sents, row_status)
     return {"verify": results, "feedback": "\n".join(bad), "sentences": sents}
 
 
@@ -306,6 +356,43 @@ def after_verify(state: AgentState):
 
 
 # ───────────────────────── 도움 함수 ─────────────────────────
+def finalize(state: AgentState, sents: list, row_status: list | None = None):
+    """최종 답이 정해진 뒤 화면에 보낼 것: 문장별 인용 구절(PDF 강조용) · 질문 유형에 맞는 표 또는 노테이션 카드"""
+    if state.get("not_found"):
+        return
+    try:
+        items = present.passages(sents)
+        if items:
+            emit(type="passages", items=items)
+    except Exception as e:   # 구절을 못 골라도 답변은 그대로
+        emit(type="notice", message=f"인용 구절을 고르지 못했습니다 ({type(e).__name__})")
+    c = state.get("trace", {}).get("compare")
+    if c and state.get("diff_rows"):
+        # 답변이 인용했거나 근거 판정이 고른 쪽의 행만 (검색 상위 10쪽 전체의 개정 행은 다른 절까지 섞임). 하나도 없으면 전부
+        focus = {p for s in sents for p in s.get("cites", [])} | set((state.get("grade") or {}).get("pages") or [])
+        rows = state["diff_rows"]
+        pages_of = lambda r: {f"KR2022:{p}" for p in r["2022 쪽"].split()} | {f"KR2026:{p}" for p in r["2026 쪽"].split()}
+        near = [r for r in rows if pages_of(r) & focus]
+        emit(type="table", table=present.diff_table(near or rows, c[0]))
+        return
+    rows = state.get("table") or []
+    if rows:
+        socs = list(rows[0]["vals"])
+        st = row_status or [{"status": None, "note": ""}] * len(rows)
+        emit(type="table", table={
+            "kind": "compare", "title": "선급 비교", "note": "답변 생성 모델이 근거 페이지에서 정리한 표 · 행마다 근거 검증",
+            "columns": ["항목", *[{"KR": "KR", "ABS": "ABS"}.get(s, s) for s in socs]],
+            "rows": [{"cells": [r["item"], *r["vals"].values()], "cites": r["cites"], "status": st[k]["status"], "note": st[k]["note"]}
+                     for k, r in enumerate(rows)]})
+        return
+    try:
+        cards = ENT.cards_for(sents)
+        if cards:
+            emit(type="cards", cards=cards)
+    except Exception as e:
+        emit(type="notice", message=f"노테이션 카드를 만들지 못했습니다 ({type(e).__name__})")
+
+
 def context_sources(state: AgentState) -> list[dict]:
     terms = terms_of(state["question"], state.get("en_query", ""))
     pages = (state.get("grade") or {}).get("pages") or pick_pages(state["ranking"], state["trace"], MAX_CONTEXT_PAGES)[:MAX_CONTEXT_PAGES + 2]
@@ -383,6 +470,13 @@ Return JSON only: {"sentences": [{"text": "...", "cites": ["SOURCE_ID", ...]}, .
 - Write notation names, symbols and abbreviations exactly as they appear in the sources.
 - For questions about what was added, removed or changed between editions, rely on the revision table source.
 - If the sources do not contain the answer, say so in one sentence with no citation. Never guess."""
+
+TABLE_TASK = """
+
+This question compares classification societies. Also return "table" in the same JSON object:
+"table": [{{"item": "<aspect, in the answer language>", {cols}, "cites": ["SOURCE_ID", ...]}}, ...]
+- 2 to 5 rows, one aspect per row (e.g. notation names, what each covers, requirements). Keep cells short (under 60 characters).
+- Use only the sources; write "-" when a society's sources say nothing about that aspect. Cite every source a row uses."""
 
 VERIFY_SYSTEM = """You verify an answer sentence by sentence against the cited sources (ship classification notation guides).
 Return JSON only: {"results": [{"index": 0, "status": "supported|inferred|unsupported", "note": "..."}, ...]}

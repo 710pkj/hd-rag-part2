@@ -59,6 +59,8 @@ type Props = {
   running: boolean;
   health: Health | null;
   hasTurns: boolean;
+  devMode: boolean;
+  onDevMode: () => void;
 };
 
 function HealthLine({ h }: { h: Health | null }) {
@@ -70,11 +72,12 @@ function HealthLine({ h }: { h: Health | null }) {
     <p className="muted" title={`LLM ${h.model ?? ""} · 모델 ${h.models ?? ""} · 벡터 DB ${h.vector_db?.name ?? ""} (${h.vector_db?.note ?? ""})`}>
       <span className={`dot ${h.groq ? "dot-on" : "dot-warn"}`} /> 백엔드 연결 · {dev}
       {models} · 벡터 DB {h.vector_db?.name ?? "?"} · Groq {h.groq ? "✓" : "키 없음"} · 웹 검색 {h.tavily ? "✓" : "꺼짐"}
+      {h.logs && ` · 기록 ${h.logs === "postgres" ? "로컬 DB" : "파일"}`}
     </p>
   );
 }
 
-export function TopBar({ questions, onPick, toggles, onToggles, onReset, running, health, hasTurns }: Props) {
+export function TopBar({ questions, onPick, toggles, onToggles, onReset, running, health, hasTurns, devMode, onDevMode }: Props) {
   const off = OPTIONAL_NODES.filter((n) => toggles[n.id] === false).length;
   return (
     <header className="topbar">
@@ -131,6 +134,14 @@ export function TopBar({ questions, onPick, toggles, onToggles, onReset, running
           </>
         )}
       </Popover>
+      <button
+        className={`btn-ghost${devMode ? " is-on" : ""}`}
+        aria-pressed={devMode}
+        onClick={onDevMode}
+        title="검색 평가 칸(지표 · 정답 쪽 순위 · 검색 구성 비교)과 정답 표시를 켜고 끕니다"
+      >
+        개발자 모드
+      </button>
       <button className="btn-ghost" onClick={onReset} disabled={running || !hasTurns}>
         <IconPlus size={15} /> 새 대화
       </button>

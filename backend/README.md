@@ -42,6 +42,20 @@ uv pip install --python .venv --reinstall-package torch torch --index-url https:
 | 답변 생성 | 근거만으로 답하고 문장마다 출처 id를 붙임 (JSON) | 없는 출처 id는 버림 |
 | 근거 검증 | LLM이 문장별로 확인·추론·근거 없음 판정 + 규칙 검사(인용 원문에 없는 노테이션 표기) | 근거 없는 문장이 있으면 피드백을 주고 1회 다시 생성 |
 
+## 사용자에게 보여 주는 형태 (2026-10-12)
+
+최종 답이 정해지면 그래프가 화면용 이벤트를 더 보낸다 (`agent/graph.py`의 `finalize`, 계산은 `agent/present.py`).
+
+| 기능 | 이벤트 | 만드는 법 |
+|---|---|---|
+| 인용 구절 강조 | `passages` | 문장마다, 인용한 쪽의 청크·문단 중 문장과 가장 비슷한 구절 (BGE-M3 dense + 0.25 × 영문·코드 낱말 겹침). 웹이 pdf.js 글자 층에서 그 줄을 찾아 노랗게 칠함 |
+| 질문 유형별 답 형태 | `table` · `cards` | 판 비교 → 판 비교표 행을 그대로 변경 표로 (인용·근거 쪽의 행만) · 질문에 선급이 둘 이상 적힘 → 답변 생성 LLM이 비교표도 만들고 행마다 근거 검증 · 그 밖 → 노테이션 카드 (`rag/entities.py`: 문서 표·목록에서 뽑은 엔티티 표, 실험 E29와 같은 규칙) |
+| 찾지 못함 | `not_found` | 재검색 뒤에도 근거 판정이 실패하고 웹 결과도 없으면 지어내지 않고 이유와 가까운 쪽 5개만 안내 |
+| 가정 · 되묻기 | `clarify` | 질문에 선급이 없거나(KR·ABS 모두 찾음), KR인데 연도가 없을 때(최신판 우선) 가정을 알리고 다른 범위로 다시 물을 선택지를 줌. 사용자가 문서 범위를 고르면 하지 않음 |
+| 실행 기록 · 피드백 | `meta.run_id` · `POST /feedback` | 질문·상위 10쪽·문장·판정·표·카드를 `agent_runs`에, 👍👎·사유를 `agent_feedback`에 (`agent/logstore.py`). 기본은 로컬 PostgreSQL `localhost:5433/hdrag`(`LOG_DATABASE_URL`로 바꿈), 안 되면 `cache_runtime/logs/*.jsonl` |
+
+개발자 모드(검색 평가 칸 · 정답 표시)는 웹에서만 켜고 끈다.
+
 ## 확인한 것
 
 - `tests/check_final27.py`: 보고서(노션)의 네 구성(E9 · 미리 정한 후보 · 최종 통합 E27 전 · 최종 통합 +E27)이 실험 노트북 결과 `final27_per_question.csv`와 37문항 모두 일치 (nDCG@10과 정답 쪽 순위, 캐시만으로, 모델 호출 차단)

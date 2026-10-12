@@ -4,7 +4,7 @@
 LangGraph 에이전트가 Part 1 검색기로 근거 페이지를 찾아 출처를 붙여 답하고 문장마다 근거를 검증하는 웹 시연입니다.
 
 - `backend/` — Python FastAPI + LangGraph. Part 1 보고서의 최종 통합 검색 구성(E27 포함, test nDCG@10 0.988)을 그대로 씀
-- `web/` — Next.js 화면. 대화, 근거 페이지 스택(원본 PDF), 검색 평가(test 질문이면 4개 지표와 정답 순위)
+- `web/` — Next.js 화면. 대화, 근거 페이지 스택(원본 PDF, 인용 구절을 노랗게 표시), 질문 유형별 답 형태(변경 표 · 비교표 · 노테이션 카드), 가정 · 되묻기, 👍👎 피드백, 개발자 모드의 검색 평가(test 질문이면 4개 지표와 정답 순위)
 - `setup.ps1` 설치 · `start-demo.ps1` 실행 · `assets/` 아이콘
 
 ## 준비물
@@ -16,6 +16,7 @@ LangGraph 에이전트가 Part 1 검색기로 근거 페이지를 찾아 출처�
 | 데이터 | `data/HD_RAG_Part1/` = Part 1 제출 폴더(압축을 푼 것: pkl 3개, csv, `cache/`, `outputs/`) · `data/pdf/` = 과제 원본 PDF 3개 |
 | API 키 | Groq(필수, 무료) · Tavily(선택, 웹 검색) |
 | 벡터 DB | 선택. `backend.env`에 Neon `DATABASE_URL`이 있으면 Neon(PostgreSQL + pgvector), 없으면 FAISS(메모리). 결과는 같음 |
+| 기록 DB | 선택. 질문 · 답변 실행 기록과 피드백을 로컬 PostgreSQL(`localhost:5433/hdrag`, `LOG_DATABASE_URL`로 바꿈)에 저장. 없으면 `backend/cache_runtime/logs/`의 JSONL 파일 |
 | 디스크 | 약 10GB (모델 4.4GB, PyTorch 1–3GB, 패키지) |
 | GPU | 없어도 됨. Intel Arc(xpu) 또는 NVIDIA(cuda)가 있으면 새 질문이 수 초 안에 끝남 |
 

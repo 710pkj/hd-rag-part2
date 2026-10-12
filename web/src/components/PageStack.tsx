@@ -32,6 +32,7 @@ type Props = {
   onIndex: (i: number) => void;
   onOpen: (i: number) => void;
   docs: Record<string, DocMeta>;
+  highlights?: Map<string, string[]>; // 쪽 → 답변이 인용한 구절 (노랗게 표시)
 };
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -54,7 +55,7 @@ function sheetStyle(d: number, exitDistance: number) {
   return { transform: `translateY(${-k * GAP}px) scale(${1 - k * SHRINK})`, opacity, zIndex: Math.round(1000 - d * 10) };
 }
 
-export function PageStack({ ids, rels, cited, index, onIndex, onOpen, docs }: Props) {
+export function PageStack({ ids, rels, cited, index, onIndex, onOpen, docs, highlights }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const sheetRefs = useRef<(HTMLDivElement | null)[]>([]);
   const anim = useRef<{ raf: number; target: number } | null>(null);
@@ -254,7 +255,9 @@ export function PageStack({ ids, rels, cited, index, onIndex, onOpen, docs }: Pr
                 style={{ width: cardW, height: cardH, top, marginLeft: -cardW / 2 }}
                 onClick={() => (front ? onOpen(i) : animateTo(i))}
               >
-                {p && doc && <PdfPage url={doc.url} page={p.page} width={RENDER_WIDTH} alt={`${doc.label} ${p.page}쪽`} />}
+                {p && doc && (
+                  <PdfPage url={doc.url} page={p.page} width={RENDER_WIDTH} alt={`${doc.label} ${p.page}쪽`} highlights={highlights?.get(id)} />
+                )}
                 {front && (
                   <div className="sheet-tag" aria-hidden>
                     <span className="sheet-rank">#{i + 1}</span>

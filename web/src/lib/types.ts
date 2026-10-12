@@ -57,9 +57,39 @@ export type AskRequest = {
   attachments: Attachment[];
 };
 
+// 막지 않는 되묻기: 질문에 선급·연도가 빠졌을 때 한 가정과, 다른 범위로 다시 물을 선택지
+export type ClarifyOption = { label: string; filters: DocId[] };
+export type Clarify = { assumption: string; ask: string; options: ClarifyOption[] };
+
+// 문장 index가 인용한 쪽 page에서 고른 구절 (PDF 강조 · 인용 미리보기)
+export type Passage = { index: number; page: string; quote: string };
+
+// 질문 유형별 답 형태: 판 비교 → 변경 표(diff), 선급 비교 → 비교표(compare)
+export type TableRow = { cells: string[]; cites?: string[]; status?: VerifyStatus | null; note?: string; badge?: string };
+export type AnswerTable = { kind: "diff" | "compare"; title: string; note?: string; columns: string[]; rows: TableRow[] };
+
+// 노테이션 카드 (문서의 표·목록에서 뽑은 엔티티)
+export type NotationCard = {
+  name: string;
+  doc: DocId;
+  page: string;
+  section: string;
+  req: string | null;
+  description: string | null;
+  refs: string | null;
+  source: string;
+};
+
+export type NotFound = { reason: string; nearest: string[] };
+
 // /api/ask 가 SSE로 보내는 이벤트
 export type AskEvent =
-  | { type: "meta"; sample: boolean; qid: string | null }
+  | { type: "meta"; sample: boolean; qid: string | null; run_id?: string }
+  | ({ type: "clarify" } & Clarify)
+  | { type: "passages"; items: Passage[] }
+  | { type: "table"; table: AnswerTable }
+  | { type: "cards"; cards: NotationCard[] }
+  | ({ type: "not_found" } & NotFound)
   | { type: "node"; id: NodeId; status: NodeStatus; detail?: string }
   | { type: "pages"; runs: Record<string, string[]>; rels: Rels | null; defaultRun: string; runMeta?: RunMeta[] }
   | { type: "sentence"; index: number; delta: string }
@@ -82,7 +112,10 @@ export type Health = {
   model?: string;
   device?: string;
   vector_db?: { name: string; note: string; sql_calls?: number; sql_ms_avg?: number | null; fallback_calls?: number };
+  logs?: string; // 실행 기록·피드백 저장소: "postgres" | "jsonl"
 };
+
+export const FEEDBACK_REASONS = ["답이 틀림", "근거 페이지가 틀림", "답이 부족함", "질문을 잘못 이해함", "너무 느림"] as const;
 
 export const TOOL_LABELS: Record<string, string> = {
   "tool:edition-diff": "판 비교표",
