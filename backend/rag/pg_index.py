@@ -1,17 +1,37 @@
-"""Neon(PostgreSQL + pgvector) 색인. RAG_SQL연동.ipynb 셀 25(SQL 4. PgIndex)를 그대로 옮겼다.
+"""PostgreSQL + pgvector 색인 (이 PC의 로컬 DB hdsearch 또는 Neon). RAG_SQL연동.ipynb 셀 25(SQL 4. PgIndex)를 그대로 옮겼다.
 
 FAISS 색인(HybridIndex)과 호출 모양이 같아서 search_v2는 고치지 않는다:
 scores()는 질문 벡터만 들고 있다가, ranked_pages()에서 SQL 한 문장으로
 허용 문서 거르기 → 청크 점수(내적 <#>) → 페이지별 최고점 → 상위 depth쪽을 받는다.
 점수가 같으면 FAISS 경로처럼 원래 행 번호(ord)가 앞선 청크·페이지가 먼저 온다.
 
-더한 것: Neon은 5분 쉬면 절전하며 연결이 끊기므로 끊기면 다시 접속한다.
-그래도 SQL이 실패하면 그 호출만 FAISS 색인으로 대신한다 (결과는 같음을 Colab·여기서 검증).
+더한 것: 연결이 끊기면 다시 접속한다 (Neon은 5분 쉬면 절전하며 끊김, 로컬 DB는 서버를 껐다 켜면 끊김).
+그래도 SQL이 실패하면 그 호출만 FAISS 색인으로 대신한다 (결과는 같음을 Colab · Neon · 로컬 DB에서 검증).
 """
+import socket
 import threading
 import time
 
 import numpy as np
+
+LOCAL_HOSTS = ("localhost", "127.0.0.1", "::1")
+
+
+def endpoint(url: str) -> tuple[str, int]:
+    """접속 주소의 (호스트, 포트). 주소 · 비밀번호는 내보내지 않는다"""
+    from psycopg.conninfo import conninfo_to_dict
+
+    d = conninfo_to_dict(url)
+    return (d.get("host") or "localhost").split(",")[0].lower(), int(str(d.get("port") or 5432).split(",")[0])
+
+
+def fail_fast_if_down(url: str, timeout: float = 0.5) -> None:
+    """이 PC의 DB면 포트가 접속을 받는지 먼저 본다 (꺼져 있으면 OSError).
+    Windows에서는 꺼진 포트에 psycopg로 바로 접속하면 거절이 곧바로 오지 않아, 주소(::1 · 127.0.0.1)와
+    방식마다 connect_timeout까지 기다림 → 15초 제한이면 약 1분 (백엔드 준비 · 검색 한 번이 그만큼 멈춤)"""
+    host, port = endpoint(url)
+    if host in LOCAL_HOSTS:
+        socket.create_connection((host, port), timeout=timeout).close()
 
 
 class Db:
@@ -27,6 +47,7 @@ class Db:
         import psycopg
         from pgvector.psycopg import register_vector
 
+        fail_fast_if_down(self.url)   # 로컬 DB가 꺼져 있으면 OSError → 서버를 켤 때는 FAISS, 검색 중이면 그 호출만 FAISS
         self.conn = psycopg.connect(self.url, autocommit=True, connect_timeout=15, keepalives=1, keepalives_idle=30)
         register_vector(self.conn)
 

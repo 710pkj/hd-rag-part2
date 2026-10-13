@@ -15,7 +15,7 @@ KV_RE = re.compile(r"^[^:;\n]{1,40}:\s")
 
 # ───────── 인용 구절: 문장마다, 인용한 쪽에서 문장과 가장 비슷한 구절 ─────────
 def _e13():
-    """구조 기반 청크 색인 (Neon 모드면 그 FAISS 대비 색인)"""
+    """구조 기반 청크 색인 (SQL 색인을 쓸 때는 대신용으로 남겨 둔 FAISS 색인)"""
     return P.IDX13 if hasattr(P.IDX13, "chunks") else P.IDX13.fallback
 
 

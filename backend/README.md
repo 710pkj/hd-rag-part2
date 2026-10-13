@@ -15,8 +15,8 @@ uv pip install --python .venv --reinstall-package torch torch --index-url https:
 ```
 
 웹과 함께 띄우려면 **선급 에이전트 시연** 바로 가기(저장소 맨 위 또는 바탕화면 = 상위 폴더 `start-demo.ps1`)를 누른다.
-꺼져 있는 서버만 최소화 창으로 켜고 시연용 크롬 창(http://localhost:3000)을 연다. 이미 켜져 있으면 크롬 창만 연다.
-크롬 창을 닫으면 이번에 켠 두 창(에이전트 백엔드, 웹 화면)과 실행한 PowerShell이 함께 꺼진다. 아이콘은 `assets/make_icon.py`로 만든다.
+꺼져 있는 서버만 켠다: 로컬 PostgreSQL(설치돼 있으면, 백엔드보다 먼저) → 백엔드 · 웹(최소화 창). 그다음 시연용 크롬 창(http://localhost:3000)을 연다. 이미 켜져 있으면 크롬 창만 연다.
+크롬 창을 닫으면 이번에 켠 두 창(에이전트 백엔드, 웹 화면)과 DB, 실행한 PowerShell이 함께 꺼진다. 아이콘은 `assets/make_icon.py`로 만든다.
 노드 흐름과 노드별 방법론은 `../docs/AGENT.md`.
 `.env`는 요청마다 다시 읽으므로 키를 넣은 뒤 서버를 다시 시작하지 않아도 된다.
 
@@ -53,7 +53,7 @@ uv pip install --python .venv --reinstall-package torch torch --index-url https:
 | 질문 유형별 답 형태 | `table` · `cards` | 판 비교 → 판 비교표 행을 그대로 변경 표로 (인용·근거 쪽의 행만) · 질문에 선급이 둘 이상 적힘 → 답변 생성 LLM이 비교표도 만들고 행마다 근거 검증 · 그 밖 → 노테이션 카드 (`rag/entities.py`: 문서 표·목록에서 뽑은 엔티티 표, 실험 E29와 같은 규칙) |
 | 찾지 못함 | `not_found` | 재검색 뒤에도 근거 판정이 실패하고 웹 결과도 없으면 지어내지 않고 이유와 가까운 쪽 5개만 안내 |
 | 가정 · 되묻기 | `clarify` | 질문에 선급이 없거나(KR·ABS 모두 찾음), KR인데 연도가 없을 때(최신판 우선) 가정을 알리고 다른 범위로 다시 물을 선택지를 줌. 사용자가 문서 범위를 고르면 하지 않음 |
-| 실행 기록 · 피드백 | `meta.run_id` · `POST /feedback` | 질문·상위 10쪽·문장·판정·표·카드를 `agent_runs`에, 👍👎·사유를 `agent_feedback`에 (`agent/logstore.py`). 기본은 로컬 PostgreSQL `localhost:5433/hdrag`(`LOG_DATABASE_URL`로 바꿈), 안 되면 `cache_runtime/logs/*.jsonl` |
+| 실행 기록 · 피드백 | `meta.run_id` · `POST /feedback` | 질문·상위 10쪽·문장·판정·표·카드를 `agent_runs`에, 👍👎·사유를 `agent_feedback`에 (`agent/logstore.py`). 기본은 로컬 PostgreSQL `localhost:5433/hdrag`(`LOG_DATABASE_URL`로 바꿈), 안 되면 `cache_runtime/logs/*.jsonl`. 파일로 넘어간 뒤에도 60초마다 다시 접속해 봄 (DB를 늦게 켜도 이어서 DB에 기록) |
 
 개발자 모드(검색 평가 칸 · 정답 표시)는 웹에서만 켜고 끈다.
 
@@ -72,16 +72,21 @@ uv pip install --python .venv --reinstall-package torch torch --index-url https:
   - 다시 생성해도 근거 없는 문장은 답변에서 빼고 안내(notice)를 붙임 / 영어 질문은 영어로 답하게 명시
   - 결과: t04·t05·t06·t07·t08·t09·t10 모두 정답 내용, 근거 검증 통과. 캐시된 질문 3–4초, Groq 사용량 한도에 걸리면 30초 안팎
 
-## 벡터 DB: Neon (PostgreSQL + pgvector)
+## 벡터 DB: PostgreSQL + pgvector (이 PC의 로컬 DB, Neon도 됨)
 
-`.env`에 `DATABASE_URL`이 있으면 1단계 검색(허용 문서 거르기 → 청크 내적 점수 → 쪽별 최고점 → 상위 50쪽)을 Neon의 `chunks` 표에서 SQL 한 문장으로 한다.
-없거나 접속이 안 되면 FAISS(메모리)를 쓰고, 검색 중 SQL이 실패하면 그 호출만 FAISS로 대신한다. `VECTOR_DB=faiss`로 FAISS에 고정할 수 있다.
+`.env`의 `DATABASE_URL`이 가리키는 DB의 `chunks` 표에서 1단계 검색(허용 문서 거르기 → 청크 내적 점수 → 쪽별 최고점 → 상위 50쪽)을 SQL 한 문장으로 한다.
+2026-10-13부터 이 PC의 로컬 PostgreSQL `localhost:5433/hdsearch`를 쓴다. Neon(클라우드)에는 같은 내용이 남아 있고 Colab 실험이 쓴다.
+주소가 없거나 접속이 안 되면 FAISS(메모리)를 쓰고, 검색 중 SQL이 실패하면 그 호출만 FAISS로 대신한다. `VECTOR_DB=faiss`로 FAISS에 고정할 수 있다.
+어느 DB를 쓸지는 서버를 켤 때 한 번 정하므로, 주소를 바꾸거나 DB를 나중에 켰으면 백엔드를 다시 켠다.
 
 - `rag/pg_index.py` = Colab `RAG_SQL연동.ipynb` 셀 25의 `PgIndex` 그대로 + 끊기면 다시 접속(Neon은 5분 쉬면 절전). `search_v2`·E27·리랭커는 고치지 않음
-- DB 내용(문서 3 · 쪽 938 · 청크 6,698 · 리랭커 점수 37,864)은 Colab에서 적재한 것을 그대로 읽음. 서버를 켤 때 청크 수가 FAISS와 다르면 FAISS를 씀
-- `tests/check_neon.py`: Neon 경로로 보고서 네 구성 × 37문항 37/37 일치(E27 포함 구성은 SQL 경로로 처음 확인), 채널별 후보 50쪽 148/148 같음, FAISS 대신 호출 0번
-- 속도: 한국 → Neon(AWS Ohio) SQL 한 번 약 0.2초, 질문당 1–2번(한국어로만 된 질문은 sparse가 비어 1번). 5분 넘게 쉬면 첫 SQL 1–2초
-- 화면 상단 바에 "벡터 DB Neon / FAISS", 검색 노드 설명에 "1단계 검색 Neon SQL n번 t초"가 나옴
+- 로컬 DB면 접속 전에 포트를 0.5초만 확인한다. Windows에서는 꺼진 포트에 바로 접속하면 시간 제한까지 기다려, DB가 꺼진 채 서버를 켤 때 60.8초 → 1.9초, 검색 중 DB가 끊기면 질문 하나 2초(결과 같음)
+- 로컬 DB 만들기: `db/search/load_search_db.py`가 Neon과 같은 표 5개(`db/search/schema.sql`)를 만들고 Part 1 캐시에서 채움(문서 3 · 쪽 938 · 청크 6,698 · 리랭커 점수 37,864, 66MB, 몇 초). `setup.ps1 -LocalDb`가 PostgreSQL 설치부터 이것까지 한다
+- 로컬과 Neon의 표 내용 해시 7/7 같음 (documents · pages · pipeline_versions · chunks의 일반 칸 · dense · sparse · rerank_scores, `db/search/compare_search_db.py`)
+- 서버를 켤 때 청크 수가 FAISS와 다르면 FAISS를 씀
+- `tests/check_neon.py`(이름은 그대로, `DATABASE_URL`의 DB를 확인): 보고서 네 구성 × 37문항 37/37 일치, 채널별 후보 50쪽 148/148 같음, FAISS 대신 호출 0번. 로컬 · Neon 모두
+- 속도 (같은 확인, SQL 368번 평균): 로컬 4.4ms · Neon 204ms(한국 → AWS Ohio). 질문당 1–2번(한국어로만 된 질문은 sparse가 비어 1번). Neon은 5분 넘게 쉬면 첫 SQL 1–2초
+- 화면 상단 바에 "벡터 DB 로컬 PostgreSQL / Neon / FAISS", 검색 노드 설명에 "1단계 검색 SQL n번 t (DB 이름)"가 나옴
 - 리랭커 점수 캐시는 아직 pkl에서 읽음 (DB `rerank_scores`에 사본 있음)
 
 ## Groq 무료 한도

@@ -60,10 +60,14 @@ if ($LASTEXITCODE -ne 0) {
 # 3) hdrag 복원
 $psql = Join-Path $bin 'psql.exe'
 $exists = & $psql @pgArgs -At -c "SELECT 1 FROM pg_database WHERE datname = 'hdrag'"
-if ($exists -eq '1') { throw 'hdrag DB가 이미 있음. 다시 복원하려면 먼저 DROP DATABASE hdrag' }
-& $psql @pgArgs -q -c 'CREATE DATABASE hdrag'
-& (Join-Path $bin 'pg_restore.exe') @pgArgs -d hdrag --no-owner $Dump
-if ($LASTEXITCODE -ne 0) { throw 'pg_restore 실패' }
+if ($exists -eq '1') {
+    # 이미 있으면 덮어쓰지 않음 (setup.ps1 -LocalDb를 다시 돌려도 됨)
+    Write-Host 'hdrag DB가 이미 있어 복원을 건너뜀. 다시 복원하려면 먼저 DROP DATABASE hdrag'
+} else {
+    & $psql @pgArgs -q -c 'CREATE DATABASE hdrag'
+    & (Join-Path $bin 'pg_restore.exe') @pgArgs -d hdrag --no-owner $Dump
+    if ($LASTEXITCODE -ne 0) { throw 'pg_restore 실패' }
+}
 & $psql @pgArgs -d hdrag -c "SELECT 'documents' AS tbl, count(*) AS n FROM documents UNION ALL SELECT 'pages', count(*) FROM pages UNION ALL SELECT 'notations', count(*) FROM notations UNION ALL SELECT 'edition_changes', count(*) FROM edition_changes UNION ALL SELECT 'section_texts', count(*) FROM section_texts UNION ALL SELECT 'doc_texts', count(*) FROM doc_texts"
 Write-Host "완료: host=localhost port=$Port user=postgres dbname=hdrag"
 Write-Host "끄기: & '$(Join-Path $bin 'pg_ctl.exe')' -D '$data' stop"

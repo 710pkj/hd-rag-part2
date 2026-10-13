@@ -2,6 +2,7 @@
 
 LOG_DATABASE_URL(기본: 이 PC의 로컬 PostgreSQL localhost:5433/hdrag)에 표 두 개(agent_runs · agent_feedback)를 두고 쓴다.
 접속이 안 되면 backend/cache_runtime/logs/의 JSONL 파일에 같은 내용을 쓴다 (기록이 빠지지 않게).
+JSONL로 넘어간 뒤에도 60초마다 다시 접속해 본다 (백엔드보다 DB를 늦게 켜거나 DB를 껐다 켜도 이어서 DB에 기록).
 쌓인 기록은 dev 질문 보강과 실패 분석의 재료가 된다 (질문 · 검색 상위 쪽 · 답변 · 판정 · 피드백이 run_id로 이어짐)."""
 import json
 import os
@@ -42,25 +43,42 @@ CREATE INDEX IF NOT EXISTS agent_feedback_run ON agent_feedback (run_id);
 _lock = threading.Lock()
 _conn = None
 _mode = None          # "postgres" | "jsonl"
+_retry_at = 0.0       # JSONL로 넘어간 뒤 다시 접속해 볼 시각
+RETRY_SEC = 60
 
 
 def _db():
-    """로컬 PostgreSQL 연결 (처음 한 번 표를 만듦). 안 되면 None → JSONL"""
-    global _conn, _mode
-    if _mode == "jsonl":
-        return None
+    """로컬 PostgreSQL 연결 (접속할 때마다 표가 없으면 만듦). 안 되면 None → JSONL, RETRY_SEC 뒤에 다시 시도"""
+    global _conn, _mode, _retry_at
     if _conn is not None and not _conn.closed:
         return _conn
+    if _mode == "jsonl" and time.time() < _retry_at:
+        return None
     try:
         import psycopg
 
-        _conn = psycopg.connect(os.environ.get("LOG_DATABASE_URL", "").strip() or DEFAULT_URL, autocommit=True, connect_timeout=2)
+        from rag.pg_index import fail_fast_if_down
+
+        url = os.environ.get("LOG_DATABASE_URL", "").strip() or DEFAULT_URL
+        fail_fast_if_down(url, timeout=0.3)   # 꺼진 로컬 DB에 바로 접속하면 4초 넘게 걸려 상태 확인 · 피드백 저장이 늦어짐
+        _conn = psycopg.connect(url, autocommit=True, connect_timeout=2)
         _conn.execute(SCHEMA)
         _mode = "postgres"
         return _conn
     except Exception:
-        _conn, _mode = None, "jsonl"
+        _conn, _mode, _retry_at = None, "jsonl", time.time() + RETRY_SEC
         return None
+
+
+def _drop():
+    """저장이 실패하면 연결을 버린다 (다음 저장 때 다시 접속하고, 안 되면 JSONL)"""
+    global _conn
+    try:
+        if _conn is not None:
+            _conn.close()
+    except Exception:
+        pass
+    _conn = None
 
 
 def mode() -> str:
@@ -92,7 +110,7 @@ def save_run(run: dict) -> str:
                 db.execute(f"INSERT INTO agent_runs ({', '.join(cols)}) VALUES ({', '.join(['%s'] * len(cols))})", vals)
                 return "postgres"
             except Exception:
-                pass
+                _drop()
         _jsonl("agent_runs.jsonl", run)
         return "jsonl"
 
@@ -106,6 +124,6 @@ def save_feedback(run_id: str, rating: str, reasons: list[str], comment: str | N
                            (run_id, rating, reasons, comment or None))
                 return "postgres"
             except Exception:
-                pass
+                _drop()
         _jsonl("agent_feedback.jsonl", {"run_id": run_id, "rating": rating, "reasons": reasons, "comment": comment})
         return "jsonl"

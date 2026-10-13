@@ -1,4 +1,6 @@
-"""Neon 경로로 보고서 네 구성 × 37문항을 재현하고(check_final27과 같은 기준), FAISS와 채널별 후보 50쪽 순서도 비교한다."""
+"""SQL 경로(DATABASE_URL의 DB: 이 PC의 로컬 hdsearch 또는 Neon)로 보고서 네 구성 × 37문항을 재현하고(check_final27과 같은 기준),
+FAISS와 채널별 후보 50쪽 순서도 비교한다. 파일 이름은 Neon으로 처음 확인할 때 붙인 것.
+다른 DB를 확인하려면 DATABASE_URL 환경 변수를 주고 실행 (.env보다 앞섬)."""
 import runpy, sys, time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -12,7 +14,7 @@ except SystemExit as e:
     code = e.code
 print("벡터 DB:", P.vector_db_status(), f"· 전체 {time.time() - t0:.0f}초")
 
-# 채널별 후보 50쪽: FAISS 색인(대신용으로 남겨 둔 것)과 Neon이 같은지
+# 채널별 후보 50쪽: FAISS 색인(대신용으로 남겨 둔 것)과 SQL 색인이 같은지
 same = total = 0
 for v in P.QSETS.values():
     info = P.analyze_query(v["query"]); allowed, _ = P.allowed_docs(info)

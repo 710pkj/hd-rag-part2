@@ -6,7 +6,7 @@ import csv, json, os, sys, time
 from collections import defaultdict
 from pathlib import Path
 
-os.environ["VECTOR_DB"] = "faiss"              # Neon에 붙지 않게 (판본 비교표만 바꿔 보는 실험)
+os.environ["VECTOR_DB"] = "faiss"              # backend/.env의 검색 DB(로컬 · Neon)에 붙지 않게 (판본 비교표만 바꿔 보는 실험)
 BACKEND = Path(__file__).resolve().parents[2] / "backend"   # 저장소의 에이전트 백엔드
 sys.path.insert(0, str(BACKEND))
 sys.stdout.reconfigure(encoding="utf-8")

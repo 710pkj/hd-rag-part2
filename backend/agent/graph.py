@@ -144,11 +144,13 @@ def retrieve(state: AgentState):
     for p in top:
         counts[p.split(":")[0]] = counts.get(p.split(":")[0], 0) + 1
     st = res["stats"]
+    sql_ms = db.ms - ms0 if db else 0.0
     detail = (f"{'재검색 ' if attempt > 1 else ''}top-10: " + ", ".join(f"{DOC_SHORT[d]} {n}쪽" for d, n in counts.items())
               + f" · 리랭커 {'한·영' if state.get('en_query') else '한국어'}"
               + (" · 선급 비교 병합(E27)" if res["trace"].get("society_merge") else "")
               + (f" · 새로 계산한 리랭커 점수 {st['rerank_new']}개 ({st['rerank_sec']:.0f}초)" if st.get("rerank_new") else " · 점수 캐시 사용")
-              + (f" · 1단계 검색 Neon SQL {db.calls - calls0}번 {(db.ms - ms0) / 1000:.1f}초" if db else " · 1단계 검색 FAISS")
+              + (f" · 1단계 검색 SQL {db.calls - calls0}번 {f'{sql_ms:.0f}ms' if sql_ms < 1000 else f'{sql_ms / 1000:.1f}초'}"
+                 f" ({P.VECTOR_DB['name']})" if db else " · 1단계 검색 FAISS")
               + f" · {time.time() - t0:.1f}초")
     runs, meta = {"final": top}, [{"key": "final", "label": "에이전트 검색", "note": "Part 1 보고서 최종 통합(E27 포함) 구성으로 이번에 검색한 결과"}]
     gt = state.get("gt")

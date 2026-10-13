@@ -949,18 +949,32 @@ def init(verbose=True):
               f"새로 계산한 임베딩 {cache.new}개 · 리랭커 점수 캐시 {len(CROSS_MEMO):,}개 · {time.time() - t0:.0f}초")
 
 
-# ───────────────────────── 벡터 DB 선택: Neon(PostgreSQL + pgvector) 또는 FAISS ─────────────────────────
+# ──────────────── 벡터 DB 선택: PostgreSQL + pgvector(이 PC의 로컬 DB 또는 Neon) 또는 FAISS ────────────────
 VECTOR_DB = {"name": "FAISS", "note": "메모리 (제출 노트북과 같음)", "db": None, "indexes": []}
 
 
+def db_label(url: str) -> tuple[str, bool]:
+    """접속 주소의 호스트로 화면에 보일 DB 이름과 로컬 여부를 정한다 (주소 · 비밀번호는 내보내지 않음)"""
+    from .pg_index import LOCAL_HOSTS, endpoint
+
+    try:
+        host, _ = endpoint(url)
+    except Exception:
+        return "PostgreSQL", False
+    if host in LOCAL_HOSTS:
+        return "로컬 PostgreSQL", True
+    return ("Neon" if host.endswith(".neon.tech") else "PostgreSQL"), False
+
+
 def use_vector_db(faiss_e9, faiss_13):
-    """DATABASE_URL이 있으면 Neon의 chunks 표를 1단계 검색 색인으로 쓴다 (VECTOR_DB=faiss로 끌 수 있음).
+    """DATABASE_URL이 있으면 그 DB(이 PC의 로컬 PostgreSQL 또는 Neon)의 chunks 표를 1단계 검색 색인으로 쓴다 (VECTOR_DB=faiss로 끌 수 있음).
     청크 수가 FAISS와 다르거나 접속이 안 되면 FAISS를 그대로 쓴다. FAISS 색인은 SQL 실패 때의 대신으로 남겨 둠"""
     global IDX_E9, IDX13
     url = os.environ.get("DATABASE_URL", "").strip()
     if not url or os.environ.get("VECTOR_DB", "").strip().lower() == "faiss":
         VECTOR_DB.update(name="FAISS", note="DATABASE_URL 없음" if not url else "VECTOR_DB=faiss")
         return
+    name, local = db_label(url)
     try:
         from .pg_index import Db, PgIndex
 
@@ -968,11 +982,14 @@ def use_vector_db(faiss_e9, faiss_13):
         pg_e9 = PgIndex(db, "struct", VOCAB_SIZE, fallback=faiss_e9, depth=DEPTH)
         pg_13 = PgIndex(db, "e13_2", VOCAB_SIZE, fallback=faiss_13, depth=DEPTH)
         if (pg_e9.n_chunks, pg_13.n_chunks) != (len(faiss_e9.chunks), len(faiss_13.chunks)):
-            raise RuntimeError(f"청크 수가 다름: Neon {pg_e9.n_chunks}/{pg_13.n_chunks} · FAISS {len(faiss_e9.chunks)}/{len(faiss_13.chunks)}")
+            raise RuntimeError(f"청크 수가 다름: {name} {pg_e9.n_chunks}/{pg_13.n_chunks} · FAISS {len(faiss_e9.chunks)}/{len(faiss_13.chunks)}")
+        ver, pgv, dbname = db.execute("SELECT current_setting('server_version'), "
+                                      "(SELECT extversion FROM pg_extension WHERE extname = 'vector'), current_database()")[0]
         IDX_E9, IDX13 = pg_e9, pg_13
-        VECTOR_DB.update(name="Neon", note="PostgreSQL + pgvector", db=db, indexes=[pg_e9, pg_13])
+        VECTOR_DB.update(name=name, note=f"PostgreSQL {ver.split()[0]} + pgvector {pgv}" + (f" · 이 PC의 {dbname} DB" if local else ""),
+                         db=db, indexes=[pg_e9, pg_13])
     except Exception as e:
-        VECTOR_DB.update(name="FAISS", note=f"Neon 접속 실패 → FAISS ({type(e).__name__}: {str(e).splitlines()[0][:100]})")
+        VECTOR_DB.update(name="FAISS", note=f"{name} 사용 불가 → FAISS ({type(e).__name__}: {str(e).splitlines()[0][:100]})")
 
 
 def vector_db_status() -> dict:
